@@ -2,9 +2,11 @@ package com.example.jetty;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.ServletHandler;
 
 public class SimpleServer {
 
@@ -31,6 +33,7 @@ public class SimpleServer {
 
   public static void main(String[] args) throws Exception {
     final Server server = new Server(8090);
+
     final SimpleHandler simpleHandler = new SimpleHandler("Dima", SCRIPT);
 
     final ResourceHandler resourceHandler = new ResourceHandler();
@@ -38,8 +41,16 @@ public class SimpleServer {
     resourceHandler.setWelcomeFiles(new String[]{"index.html"});
     resourceHandler.setResourceBase("static");
 
+    final ServletHandler servletHandler = new ServletHandler();
+    servletHandler.addServletWithMapping(SimpleServlet.class, "/servlet");
+
     final HandlerList handlerList = new HandlerList();
-    handlerList.setHandlers(new Handler[]{resourceHandler, simpleHandler, new DefaultHandler()});
+    handlerList.setHandlers(new Handler[]{
+        resourceHandler,
+        simpleHandler,
+        servletHandler,
+        new DefaultHandler()
+    });
     server.setHandler(handlerList);
 
     server.start();
