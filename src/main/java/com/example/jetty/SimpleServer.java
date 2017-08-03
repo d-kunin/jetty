@@ -2,12 +2,15 @@ package com.example.jetty;
 
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 
+/**
+ * More examples https://github.com/eclipse/jetty.project/tree/jetty-9.4.x/examples
+ */
 public class SimpleServer {
 
   private final static String SCRIPT = "<script>\n" +
@@ -44,11 +47,17 @@ public class SimpleServer {
     final ServletHandler servletHandler = new ServletHandler();
     servletHandler.addServletWithMapping(SimpleServlet.class, "/servlet");
 
+    final ContextHandler contextHandler = new ContextHandler("/context");
+    contextHandler.setHandler(new HandlerList(new Handler[]{
+        simpleHandler
+    }));
+
     final HandlerList handlerList = new HandlerList();
     handlerList.setHandlers(new Handler[]{
         resourceHandler,
         simpleHandler,
         servletHandler,
+        contextHandler,
         new DefaultHandler()
     });
     server.setHandler(handlerList);

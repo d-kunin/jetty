@@ -1,5 +1,7 @@
 package com.example.jetty;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -26,7 +28,7 @@ public class SimpleHandler extends AbstractHandler {
                      final HttpServletResponse httpServletResponse)
       throws IOException, ServletException
   {
-    if (!"/time".equals(target)) {
+    if (!ImmutableSet.of("/time", "/context").contains(target)) {
       return;
     }
 
@@ -35,6 +37,7 @@ public class SimpleHandler extends AbstractHandler {
 
     final PrintWriter out = httpServletResponse.getWriter();
     out.println(String.format("<h1>%s</h1>", greeting));
+    out.println(String.format("<h2>Path %s</h2>", target));
     if (null != body) {
       out.println(body);
     }
